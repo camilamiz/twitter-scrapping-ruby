@@ -1,9 +1,15 @@
 require 'open-uri'
 require 'nokogiri'
 
-# class TwitterUsersController < ApplicationController
-#   def index
-#   end
+class TwitterUsersController < ApplicationController
+  def index
+    if params[:query].present?
+        sql_query = "name ILIKE :query OR page_address ILIKE :query"
+      @movies = Movie.where(sql_query, query: "%#{params[:query]}%")
+    else
+        @twitter_users = TwitterUser.all
+    end
+  end
   
 #   private
   
@@ -16,8 +22,8 @@ require 'nokogiri'
     puts html_doc.css('a.ProfileHeaderCard-nameLink.u-textInheritColor.js-nav').inner_text
     puts html_doc.css('h2.ProfileHeaderCard-screenname.u-inlineBlock.u-dir').inner_text.strip
     puts html_doc.css('p.ProfileHeaderCard-bio.u-dir').inner_text.strip
+    end
+
 end
 
-# end
-
-get_users('http://www.twitter.com/catracalivre')
+# get_users('http://www.twitter.com/catracalivre')
