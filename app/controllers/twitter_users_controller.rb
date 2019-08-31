@@ -10,6 +10,14 @@ class TwitterUsersController < ApplicationController
             @twitter_users = TwitterUser.all
         end
     end
+
+    def new
+        @twitter_user = TwitterUser.new
+    end
+
+    def create
+        @twitter_user= TwitterUser.new
+    end
   
     private
     def get_users(url)
