@@ -1,5 +1,3 @@
 Rails.application.routes.draw do
-  get 'twitter_users/index'
-  root to: 'pages#home'
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  resources :twitter_users, only: [:index, :new, :create, :show]
 end
