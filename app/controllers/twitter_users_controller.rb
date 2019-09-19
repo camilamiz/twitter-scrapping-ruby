@@ -2,6 +2,8 @@ require 'open-uri'
 require 'nokogiri'
 
 class TwitterUsersController < ApplicationController
+    before_action :set_twitter_user, only: [:show, :edit, :update, :destroy]
+
     def index
         if params[:query].present?
             sql_query = "name ILIKE :query OR page_address ILIKE :query"
@@ -18,7 +20,7 @@ class TwitterUsersController < ApplicationController
     def create
         @twitter_user= TwitterUser.new(twitter_user_params)
         url = @twitter_user.page_address
-        html_doc = get_user(url)
+        html_doc = scrape_twitter_user_info(url)
         @twitter_user.username = html_doc.css('h2.ProfileHeaderCard-screenname.u-inlineBlock.u-dir').inner_text.strip
         @twitter_user.description = html_doc.css('p.ProfileHeaderCard-bio.u-dir').inner_text.strip
         if @twitter_user.save
@@ -29,7 +31,6 @@ class TwitterUsersController < ApplicationController
     end
     
     def show
-        @twitter_user = TwitterUser.find(params[:twitter_user_id])
     end
     
     def edit
@@ -39,10 +40,12 @@ class TwitterUsersController < ApplicationController
     end
     
     def destroy
+        @twitter_user.destroy
+        redirect_to twitter_users_path
     end
 
     private
-    def get_user(url)
+    def scrape_twitter_user_info(url)
         # t_user = TwitterUser.where(name: name).first
         html_file = open(url).read
         # html_file = open(t_user.page_address).read
@@ -50,9 +53,13 @@ class TwitterUsersController < ApplicationController
         return html_doc
     end
     
+    def set_twitter_user
+        @twitter_user = TwitterUser.find(params[:twitter_user_id])
+    end
+
     def twitter_user_params
         params.require(:twitter_user).permit(:name, :page_address)
     end
 end
 
-# get_user('http://www.twitter.com/catracalivre')
+# scrape_twitter_user_info('http://www.twitter.com/catracalivre')
