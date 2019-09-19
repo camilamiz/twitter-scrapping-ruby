@@ -5,7 +5,7 @@ class TwitterUsersController < ApplicationController
     def index
         if params[:query].present?
             sql_query = "name ILIKE :query OR page_address ILIKE :query"
-            @twitter_user = TwitterUser.where(sql_query, query: "%#{params[:query]}%").first
+            @twitter_users = TwitterUser.where(sql_query, query: "%#{params[:query]}%")
         else
             @twitter_users = TwitterUser.all
         end
@@ -28,10 +28,19 @@ class TwitterUsersController < ApplicationController
         end
     end
     
-        def show
-            @twitter_user = TwitterUser.find(params[:id])
-        end
+    def show
+        @twitter_user = TwitterUser.find(params[:twitter_user_id])
+    end
     
+    def edit
+    end
+
+    def update
+    end
+    
+    def destroy
+    end
+
     private
     def get_user(url)
         # t_user = TwitterUser.where(name: name).first
